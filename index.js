@@ -2,7 +2,10 @@ var through = require('through2'),
   gutil = require('gulp-util'),
   coveralls = require('coveralls');
 
-module.exports = function() {
+module.exports = function (gulpOptions) {
+  gulpOptions = gulpOptions || { filepath : '.' };
+
+
   return through.obj(function(file, enc, callback) {
     var stream = this;
 
@@ -24,7 +27,7 @@ module.exports = function() {
 
     function sendToCoveralls(input, done) {
       coveralls.getBaseOptions(function(err, options){
-        options.filepath = '.';
+        options.filepath = gulpOptions.filepath;
         coveralls.convertLcovToCoveralls(input, options, function(err, postData){
           handleError(done, err);
           coveralls.sendToCoveralls(postData, function(err, response, body){
